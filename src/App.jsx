@@ -133,7 +133,11 @@ function App() {
       const profRes = await fetch(`${API_URL}/api/student/profile`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (profRes.ok) setStudentProfile(await profRes.json());
+      if (profRes.ok) {
+        const profData = await profRes.json();
+        setStudentProfile(profData);
+        setUser((prev) => (prev ? { ...prev, name: profData.name, email: profData.email } : prev));
+      }
 
       const histRes = await fetch(`${API_URL}/api/student/courses`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -175,7 +179,11 @@ function App() {
       const profRes = await fetch(`${API_URL}/api/faculty/profile`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (profRes.ok) setFacultyProfile(await profRes.json());
+      if (profRes.ok) {
+        const profData = await profRes.json();
+        setFacultyProfile(profData);
+        setUser((prev) => (prev ? { ...prev, name: profData.name, email: profData.email } : prev));
+      }
 
       const crsRes = await fetch(`${API_URL}/api/faculty/courses`, {
         headers: { Authorization: `Bearer ${token}` },
