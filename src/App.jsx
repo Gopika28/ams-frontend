@@ -434,9 +434,12 @@ function App() {
   };
 
   const getFilteredStudents = () => {
-    if (!studentSearch) return adminStudents;
+    const list = (adminStudents || []).filter(
+      (s) => s.student_id === "STU101" || s.student_id === "STU102"
+    );
+    if (!studentSearch) return list;
     const q = studentSearch.toLowerCase();
-    return adminStudents.filter(
+    return list.filter(
       (s) =>
         s.student_id.toLowerCase().includes(q) ||
         s.name.toLowerCase().includes(q) ||
@@ -676,7 +679,7 @@ function App() {
               ) : (
                 <>
                   <div className="stat-item">
-                    <div className="stat-value">{(adminStudents || []).length || 2}</div>
+                    <div className="stat-value">{getFilteredStudents().length || 2}</div>
                     <div className="stat-label">Students</div>
                   </div>
                   <div className="stat-item">
