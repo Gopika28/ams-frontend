@@ -127,9 +127,6 @@ function App() {
       const demoUsers = {
         STU101: { id: 1, username: "STU101", role: "student", ref_id: 1, email: "priya@university.edu" },
         STU102: { id: 2, username: "STU102", role: "student", ref_id: 2, email: "meenu@university.edu" },
-        STU103: { id: 3, username: "STU103", role: "student", ref_id: 3, email: "ananya@university.edu" },
-        STU104: { id: 4, username: "STU104", role: "student", ref_id: 4, email: "karthik@university.edu" },
-        STU105: { id: 5, username: "STU105", role: "student", ref_id: 5, email: "rahul@university.edu" },
         FAC201: { id: 6, username: "FAC201", role: "faculty", ref_id: 1, email: "seshadri@university.edu" },
         FAC202: { id: 7, username: "FAC202", role: "faculty", ref_id: 2, email: "meenakshi@university.edu" },
         FAC203: { id: 8, username: "FAC203", role: "faculty", ref_id: 3, email: "ramaswamy@university.edu" },
@@ -595,15 +592,6 @@ function App() {
                 </button>
                 <button className="preset-chip" onClick={() => handleQuickPresetLogin("STU102", "student")}>
                   🎓 STU102 (Meenu)
-                </button>
-                <button className="preset-chip" onClick={() => handleQuickPresetLogin("STU103", "student")}>
-                  🎓 STU103 (Ananya)
-                </button>
-                <button className="preset-chip" onClick={() => handleQuickPresetLogin("STU104", "student")}>
-                  🎓 STU104 (Karthik)
-                </button>
-                <button className="preset-chip" onClick={() => handleQuickPresetLogin("STU105", "student")}>
-                  🎓 STU105 (Rahul)
                 </button>
                 <button className="preset-chip" onClick={() => handleQuickPresetLogin("FAC201", "faculty")}>
                   👨‍🏫 FAC201 (Seshadri)
