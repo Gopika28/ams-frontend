@@ -472,18 +472,12 @@ function App() {
           <div>
             <div className="brand-title">
               Academic Management System
-              <span className="brand-badge">IIT CSE Edition</span>
             </div>
             <div className="brand-subtitle">Enterprise Academic Administration & Student Portal</div>
           </div>
         </div>
 
         <div className="nav-actions">
-          <div className={`status-badge ${dbStatus.mode === "memory" ? "memory" : ""}`}>
-            <div className="status-dot"></div>
-            <span>{dbStatus.message || "PostgreSQL Live Engine"}</span>
-          </div>
-
           {user && (
             <div className="user-pill">
               <span className={`role-badge ${user.role}`}>{user.role}</span>
@@ -502,7 +496,7 @@ function App() {
           <div className="auth-card">
             <div className="auth-header">
               <h2>Portal Sign In</h2>
-              <p>Select your role or click a demo account below to proceed.</p>
+              <p>Select your user role to proceed to your academic dashboard.</p>
             </div>
 
             <div className="role-tabs">
@@ -547,7 +541,7 @@ function App() {
                 <input
                   type="text"
                   className="form-control"
-                  placeholder={loginTab === "student" ? "e.g. STU101, STU103" : loginTab === "faculty" ? "e.g. FAC201" : "admin"}
+                  placeholder={loginTab === "student" ? "e.g. STU101, STU102" : loginTab === "faculty" ? "e.g. FAC201" : "admin"}
                   value={loginForm.username}
                   onChange={(e) => setLoginForm({ ...loginForm, username: e.target.value })}
                   required
@@ -579,28 +573,6 @@ function App() {
                 {authLoading ? "Authenticating Account..." : "Sign In to Portal →"}
               </button>
             </form>
-
-            {/* 1-Click Demo Accounts Quick Selector */}
-            <div className="preset-chips-container">
-              <div className="preset-title">
-                <span>⚡ 1-Click Demo Quick Switcher</span>
-                <span style={{ fontSize: "11px", textTransform: "none", color: "var(--primary)", fontWeight: 700 }}>Pass: password123</span>
-              </div>
-              <div className="preset-chips">
-                <button className="preset-chip" onClick={() => handleQuickPresetLogin("STU101", "student")}>
-                  🎓 STU101 (Priya)
-                </button>
-                <button className="preset-chip" onClick={() => handleQuickPresetLogin("STU102", "student")}>
-                  🎓 STU102 (Meenu)
-                </button>
-                <button className="preset-chip" onClick={() => handleQuickPresetLogin("FAC201", "faculty")}>
-                  👨‍🏫 FAC201 (Seshadri)
-                </button>
-                <button className="preset-chip" onClick={() => handleQuickPresetLogin("admin", "admin")}>
-                  🛡️ Admin
-                </button>
-              </div>
-            </div>
           </div>
         </div>
       ) : (
@@ -704,7 +676,7 @@ function App() {
               ) : (
                 <>
                   <div className="stat-item">
-                    <div className="stat-value">{(adminStudents || []).length || 5}</div>
+                    <div className="stat-value">{(adminStudents || []).length || 2}</div>
                     <div className="stat-label">Students</div>
                   </div>
                   <div className="stat-item">
