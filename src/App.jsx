@@ -713,7 +713,7 @@ function App() {
                     className={`nav-tab-btn ${activeTab === "notifications" ? "active" : ""}`}
                     onClick={() => setActiveTab("notifications")}
                   >
-                    🔔 Grade Notifications ({studentNotifications.length})
+                    🔔 Grade Notifications ({(studentNotifications || []).length})
                   </button>
                 </>
               )}
@@ -970,7 +970,7 @@ function App() {
                 <div className="table-header">
                   <h4>🔔 Automated Grade Publication Notifications</h4>
                   <span className="status-badge">
-                    {studentNotifications.length} Dispatched Alerts
+                    {(studentNotifications || []).length} Dispatched Alerts
                   </span>
                 </div>
 
@@ -984,14 +984,14 @@ function App() {
                     </tr>
                   </thead>
                   <tbody>
-                    {studentNotifications.length === 0 ? (
+                    {(studentNotifications || []).length === 0 ? (
                       <tr>
                         <td colSpan="4" style={{ textAlign: "center", color: "var(--text-muted)", padding: "28px" }}>
                           No grade notifications or email alerts dispatched to your account yet.
                         </td>
                       </tr>
                     ) : (
-                      studentNotifications.map((notif) => (
+                      (studentNotifications || []).map((notif) => (
                         <tr key={notif.id}>
                           <td><strong>{notif.subject}</strong></td>
                           <td>{new Date(notif.sent_at).toLocaleString()}</td>
