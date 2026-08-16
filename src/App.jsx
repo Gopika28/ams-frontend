@@ -17,7 +17,6 @@ function App() {
 
   const [loginTab, setLoginTab] = useState("student");
   const [loginForm, setLoginForm] = useState({ username: "STU101", password: "password123" });
-  const [showPassword, setShowPassword] = useState(false);
   const [authError, setAuthError] = useState("");
   const [authLoading, setAuthLoading] = useState(false);
 
@@ -29,6 +28,7 @@ function App() {
   const [studentProfile, setStudentProfile] = useState(null);
   const [studentHistory, setStudentHistory] = useState([]);
   const [availableCourses, setAvailableCourses] = useState([]);
+  const [studentNotifications, setStudentNotifications] = useState([]);
 
   const [facultyProfile, setFacultyProfile] = useState(null);
   const [taughtCourses, setTaughtCourses] = useState([]);
@@ -193,6 +193,11 @@ function App() {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (availRes.ok) setAvailableCourses(await availRes.json());
+
+      const notifRes = await fetch(`${API_URL}/api/student/notifications`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (notifRes.ok) setStudentNotifications(await notifRes.json());
     } catch (err) {
       console.error("Error fetching student records:", err);
     }
@@ -553,23 +558,14 @@ function App() {
 
               <div className="form-group">
                 <label>Password</label>
-                <div className="input-with-icon">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    className="form-control"
-                    placeholder="password123"
-                    value={loginForm.password}
-                    onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
-                    required
-                  />
-                  <button
-                    type="button"
-                    className="password-toggle-btn"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? "Hide" : "Show"}
-                  </button>
-                </div>
+                <input
+                  type="password"
+                  className="form-control"
+                  placeholder="password123"
+                  value={loginForm.password}
+                  onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
+                  required
+                />
               </div>
 
               <button type="submit" className="btn btn-primary" style={{ width: "100%", marginTop: "8px" }} disabled={authLoading}>
@@ -712,6 +708,12 @@ function App() {
                     onClick={() => setActiveTab("grades")}
                   >
                     Official Grade Transcript
+                  </button>
+                  <button
+                    className={`nav-tab-btn ${activeTab === "notifications" ? "active" : ""}`}
+                    onClick={() => setActiveTab("notifications")}
+                  >
+                    🔔 Grade Notifications ({studentNotifications.length})
                   </button>
                 </>
               )}
@@ -956,6 +958,53 @@ function App() {
                             </td>
                           </tr>
                         ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {/* Student Tab: Grade Notifications */}
+            {user.role === "student" && activeTab === "notifications" && (
+              <div className="table-card">
+                <div className="table-header">
+                  <h4>🔔 Automated Grade Publication Notifications</h4>
+                  <span className="status-badge">
+                    {studentNotifications.length} Dispatched Alerts
+                  </span>
+                </div>
+
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>Subject / Alert</th>
+                      <th>Time Sent</th>
+                      <th>Status</th>
+                      <th>Notification Details & Body</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {studentNotifications.length === 0 ? (
+                      <tr>
+                        <td colSpan="4" style={{ textAlign: "center", color: "var(--text-muted)", padding: "28px" }}>
+                          No grade notifications or email alerts dispatched to your account yet.
+                        </td>
+                      </tr>
+                    ) : (
+                      studentNotifications.map((notif) => (
+                        <tr key={notif.id}>
+                          <td><strong>{notif.subject}</strong></td>
+                          <td>{new Date(notif.sent_at).toLocaleString()}</td>
+                          <td>
+                            <span className="status-badge" style={{ background: "rgba(16, 185, 129, 0.15)", color: "#10b981" }}>
+                              Dispatched
+                            </span>
+                          </td>
+                          <td style={{ whiteSpace: "pre-line", fontSize: "12.5px" }}>
+                            {notif.body}
+                          </td>
+                        </tr>
+                      ))
                     )}
                   </tbody>
                 </table>
