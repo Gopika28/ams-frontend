@@ -7,7 +7,7 @@ const getSanitizedApiUrl = () => {
     (typeof window !== "undefined" &&
     (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
       ? "http://localhost:8080"
-      : "https://ams-backend-5udc.onrender.com");
+      : "https://ams-backend-4uda.onrender.com");
 
   // Force HTTPS if calling Render to avoid 307 Redirects
   if (rawUrl.includes("onrender.com") && rawUrl.startsWith("http://")) {
