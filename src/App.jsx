@@ -399,7 +399,8 @@ function App() {
     try {
       const res = await fetch(`${API_URL}/api/email-logs`);
       if (res.ok) {
-        setEmailLogs(await res.json());
+        const data = await res.json();
+        setEmailLogs(data || []);
         setShowEmailLogs(true);
       }
     } catch (err) {
@@ -1474,14 +1475,14 @@ function App() {
                 </tr>
               </thead>
               <tbody>
-                {emailLogs.length === 0 ? (
+                {(emailLogs || []).length === 0 ? (
                   <tr>
                     <td colSpan="5" style={{ textAlign: "center", color: "var(--text-muted)", padding: "28px" }}>
                       No notification email logs found in database.
                     </td>
                   </tr>
                 ) : (
-                  emailLogs.map((log) => (
+                  (emailLogs || []).map((log) => (
                     <tr key={log.id}>
                       <td><code>{log.recipient_email}</code></td>
                       <td><strong>{log.student_name}</strong></td>
