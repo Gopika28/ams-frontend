@@ -1,12 +1,24 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./App.css";
 
-const API_URL =
-  import.meta.env.VITE_API_URL ||
-  (typeof window !== "undefined" &&
-  (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
-    ? "http://localhost:8080"
-    : "https://ams-backend-5udc.onrender.com");
+const getSanitizedApiUrl = () => {
+  let rawUrl =
+    import.meta.env.VITE_API_URL ||
+    (typeof window !== "undefined" &&
+    (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+      ? "http://localhost:8080"
+      : "https://ams-backend-5udc.onrender.com");
+
+  // Force HTTPS if calling Render to avoid 307 Redirects
+  if (rawUrl.includes("onrender.com") && rawUrl.startsWith("http://")) {
+    rawUrl = rawUrl.replace("http://", "https://");
+  }
+
+  // Remove trailing slash if present
+  return rawUrl.replace(/\/+$/, "");
+};
+
+const API_URL = getSanitizedApiUrl();
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem("ams_token") || "");
@@ -58,8 +70,13 @@ function App() {
   const [studentSearch, setStudentSearch] = useState("");
   const [facultySearch, setFacultySearch] = useState("");
 
+  const hasFetchedHealth = useRef(false);
+
   useEffect(() => {
-    fetchDbHealth();
+    if (!hasFetchedHealth.current) {
+      hasFetchedHealth.current = true;
+      fetchDbHealth();
+    }
   }, []);
 
   const fetchDbHealth = async () => {

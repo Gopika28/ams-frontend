@@ -2,7 +2,11 @@
   command = "npm run build"
   publish = "dist"
 
+[build.environment]
+  VITE_API_URL = "https://ams-backend-5udc.onrender.com"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+
