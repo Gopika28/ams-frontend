@@ -303,7 +303,7 @@ function App() {
   const handleSingleGradeSubmit = async (e) => {
     e.preventDefault();
     if (!selectedOfferingID) {
-      alert("Select a course offering first.");
+      alert("Please select a target course offering first.");
       return;
     }
 
@@ -326,17 +326,19 @@ function App() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to update grade");
 
+      alert(`✅ Success: ${data.message || "Grade uploaded successfully and email notification dispatched"}`);
       showToast("Grade updated & audit email logged successfully.");
       setSingleGradeForm({ student_roll_no: "", marks: "", grade: "A+", remarks: "" });
       fetchEnrolledStudents(selectedOfferingID);
+      fetchEmailLogs();
     } catch (err) {
-      alert(`Grade Error: ${err.message}`);
+      alert(`Grade Submission Error: ${err.message}`);
     }
   };
 
   const handleBulkGradeSubmit = async () => {
     if (!selectedOfferingID) {
-      alert("Select a course offering first.");
+      alert("Please select a target course offering first.");
       return;
     }
 
@@ -348,7 +350,9 @@ function App() {
 
     const grades = [];
     for (let i = 1; i < lines.length; i++) {
-      const parts = lines[i].split(",");
+      const line = lines[i].trim();
+      if (!line) continue;
+      const parts = line.split(",");
       if (parts.length >= 3) {
         grades.push({
           student_roll_no: parts[0].trim(),
@@ -376,8 +380,10 @@ function App() {
       if (!res.ok) throw new Error(data.error || "Bulk submission failed");
 
       setBulkReport(data);
+      alert(`✅ Bulk Upload Complete: ${data.success_count} grades saved & student emails queued. ${data.failed_count} rows flagged.`);
       showToast(`Processed bulk upload: ${data.success_count} saved, ${data.failed_count} flagged.`);
       fetchEnrolledStudents(selectedOfferingID);
+      fetchEmailLogs();
     } catch (err) {
       alert(`Bulk Grade Error: ${err.message}`);
     }
@@ -740,8 +746,11 @@ function App() {
                     Bulk CSV Upload
                   </button>
                   <button
-                    className="nav-tab-btn"
-                    onClick={fetchEmailLogs}
+                    className={`nav-tab-btn ${activeTab === "email_audit" ? "active" : ""}`}
+                    onClick={() => {
+                      setActiveTab("email_audit");
+                      fetchEmailLogs();
+                    }}
                     style={{ marginLeft: "auto" }}
                   >
                     📧 Email Audit Logs
@@ -1288,6 +1297,56 @@ function App() {
                     </p>
                   )}
                 </div>
+              </div>
+            )}
+
+            {/* Faculty/Admin Tab: Email Audit Logs View */}
+            {(user.role === "faculty" || user.role === "admin") && activeTab === "email_audit" && (
+              <div className="table-card">
+                <div className="table-header">
+                  <h4>📧 Automated Email Notification Audit Trail</h4>
+                  <button className="btn btn-outline btn-sm" onClick={fetchEmailLogs}>
+                    🔄 Refresh Email Logs
+                  </button>
+                </div>
+                <p style={{ fontSize: "13px", color: "var(--text-muted)", padding: "0 24px 16px 24px" }}>
+                  Audit trail of automated email notifications dispatched upon grade publication.
+                </p>
+
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>Recipient Email</th>
+                      <th>Student Name</th>
+                      <th>Subject</th>
+                      <th>Time Sent</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(emailLogs || []).length === 0 ? (
+                      <tr>
+                        <td colSpan="5" style={{ textAlign: "center", color: "var(--text-muted)", padding: "28px" }}>
+                          No notification email logs found in database.
+                        </td>
+                      </tr>
+                    ) : (
+                      (emailLogs || []).map((log) => (
+                        <tr key={log.id}>
+                          <td><code>{log.recipient_email}</code></td>
+                          <td><strong>{log.student_name}</strong></td>
+                          <td>{log.subject}</td>
+                          <td>{new Date(log.sent_at).toLocaleString()}</td>
+                          <td>
+                            <span className="status-badge" style={{ background: "rgba(16, 185, 129, 0.15)", color: "#10b981" }}>
+                              Dispatched
+                            </span>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
               </div>
             )}
 
